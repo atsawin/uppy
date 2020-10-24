@@ -15,14 +15,14 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const ReduxDevTools = require('uppy/redux-dev-tools')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(ReduxDevTools)
 ```
 
 ## Installation
 
 ```bash
-$ npm install @uppy/redux-dev-tools --save
+$ npm install @uppy/redux-dev-tools
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

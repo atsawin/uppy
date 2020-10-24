@@ -17,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Url = require('@uppy/url')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Url, {
   // Options
 })
@@ -26,7 +26,7 @@ uppy.use(Url, {
 ## Installation
 
 ```bash
-$ npm install @uppy/url --save
+$ npm install @uppy/url
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Tus = require('@uppy/tus')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Tus, {
   endpoint: 'https://master.tus.io/files/', // use your tus endpoint here
   resume: true,
@@ -27,7 +27,7 @@ uppy.use(Tus, {
 ## Installation
 
 ```bash
-$ npm install @uppy/tus --save
+$ npm install @uppy/tus
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

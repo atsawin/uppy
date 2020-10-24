@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const { DashboardModal } = require('@uppy/react')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 
 class Example extends React.Component {
   state = { open: false }
@@ -35,7 +35,7 @@ class Example extends React.Component {
 ## Installation
 
 ```bash
-$ npm install @uppy/react --save
+$ npm install @uppy/react
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

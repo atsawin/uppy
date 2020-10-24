@@ -22,6 +22,10 @@ class GoogleDrive extends Plugin {
     // snip
   }
 
+  onFirstRender () {
+    return this.view.getFolder('root', '/')
+  }
+
   render (state) {
     return this.view.render(state)
   }
@@ -33,7 +37,7 @@ class GoogleDrive extends Plugin {
 > Unless you are creating a custom provider plugin, you do not need to install this.
 
 ```bash
-$ npm install @uppy/provider-views --save
+$ npm install @uppy/provider-views
 ```
 
 <!-- Undocumented currently

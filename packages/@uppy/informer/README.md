@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Informer = require('@uppy/informer')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Informer, {
   target: '#mount-point'
 })
@@ -24,7 +24,7 @@ uppy.use(Informer, {
 ## Installation
 
 ```bash
-$ npm install @uppy/informer --save
+$ npm install @uppy/informer
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

@@ -19,13 +19,13 @@ Companion handles the server-to-server communication between your server and fil
 
 As of now, Companion is integrated to work with:
 
-- Google Drive
-- Dropbox
-- Instagram
-- Facebook
-- OneDrive
-- Remote URLs
-- Amazon S3
+- Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
+- Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
+- Instagram (name `instagram`)
+- Facebook (name `facebook`)
+- OneDrive (name `onedrive`)
+- Remote URLs (name `url`)
+- Amazon S3 (name `s3`)
 
 ## Installation
 
@@ -35,7 +35,11 @@ Install from NPM:
 npm install @uppy/companion
 ```
 
-If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@1.x`.
+
+### Prerequisite
+
+Since v2, you now need to be running `node.js >= v10.20.1` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we're happy to accept improvements in this area, but we can't provide assistance.
 
@@ -61,9 +65,9 @@ app.use(session({secret: 'some secrety secret'}))
 // be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
 const options = {
   providerOptions: {
-    google: {
-      key: 'GOOGLE_KEY',
-      secret: 'GOOGLE_SECRET'
+    drive: {
+      key: 'GOOGLE_DRIVE_KEY',
+      secret: 'GOOGLE_DRIVE_SECRET'
     }
   },
   server: {
@@ -146,6 +150,10 @@ export COMPANION_PROTOCOL="YOUR SERVER PROTOCOL"
 export COMPANION_PORT="YOUR SERVER PORT"
 # corresponds to the server.port option, defaults to ''
 export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
+# disables the welcome page, defaults to false
+export COMPANION_HIDE_WELCOME="true"
+# disables the metrics page, defaults to false
+export COMPANION_HIDE_METRICS="true"
 
 # use this in place of COMPANION_PATH if the server path should not be
 # handled by the express.js app, but maybe by an external server configuration
@@ -167,10 +175,10 @@ export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 export COMPANION_DROPBOX_SECRET_FILE="PATH/TO/DROPBOX/SECRET/FILE"
 
 # to enable Google Drive
-export COMPANION_GOOGLE_KEY="YOUR GOOGLE KEY"
-export COMPANION_GOOGLE_SECRET="YOUR GOOGLE SECRET"
+export COMPANION_GOOGLE_KEY="YOUR GOOGLE DRIVE KEY"
+export COMPANION_GOOGLE_SECRET="YOUR GOOGLE DRIVE SECRET"
 # specifying a secret file will override a directly set secret
-export COMPANION_GOOGLE_SECRET_FILE="PATH/TO/GOOGLE/SECRET/FILE"
+export COMPANION_GOOGLE_SECRET_FILE="PATH/TO/GOOGLEDRIVE/SECRET/FILE"
 
 # to enable Instagram
 export COMPANION_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
@@ -189,6 +197,12 @@ export COMPANION_ONEDRIVE_KEY="YOUR ONEDRIVE KEY"
 export COMPANION_ONEDRIVE_SECRET="YOUR ONEDRIVE SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_ONEDRIVE_SECRET_FILE="PATH/TO/ONEDRIVE/SECRET/FILE"
+
+# to enable Zoom
+export COMPANION_ZOOM_KEY="YOUR ZOOM KEY"
+export COMPANION_ZOOM_SECRET="YOUR ZOOM SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_ZOOM_SECRET_FILE="PATH/TO/ZOOM/SECRET/FILE"
 
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"
@@ -224,7 +238,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 ```javascript
 {
   providerOptions: {
-    google: {
+    drive: {
       key: "***",
       secret: "***"
     },
@@ -240,7 +254,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       key: "***",
       secret: "***"
     },
-    microsoft: {
+    onedrive: {
       key: "***",
       secret: "***"
     },
@@ -273,7 +287,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 3. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-Providers).
+4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
 
 5. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
@@ -286,13 +300,25 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
+7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
 8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
 9. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
 10. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+
+### Provider Redirect URIs
+
+When generating your provider API keys on their corresponding developer platforms (e.g [Google Developer Console](https://console.developers.google.com/)), you'd need to provide a `redirect URI` for the OAuth authorization process. In general the redirect URI for each provider takes the format:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect`
+
+For example, if your Companion server is hosted on `https://my.companion.server.com`, then the redirect URI you would supply for your OneDrive provider would be:
+
+`https://my.companion.server.com/onedrive/redirect`
+
+Please see [Supported Providers](https://uppy.io/docs/companion/#Supported-providers) for a list of all Providers and their corresponding names.
 
 ### S3 options
 
@@ -359,7 +385,7 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 
 ### Adding custom providers
 
-As of now, Companion supports **Google Drive**, **Dropbox**, **Instagram**, and **URL** (remote urls) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {
@@ -390,13 +416,92 @@ To work well with Companion, the **Module** must be a class with the following m
     - token - authorization token (retrieved from oauth process) to send along with your request
     - directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
     - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `done (err, response, body)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, `response`, and `body`.
-2. `download (options, onData, onResponse)` - downloads a particular file from the provider.
+  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
+2. `download (options, onData)` - downloads a particular file from the provider.
   - `options` - is an object containing the following attributes:
     - token - authorization token (retrieved from oauth process) to send along with your request.
     - id - ID of the file being downloaded.
-  - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file (to the desired destination), while the download is still going on.
-  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by Companion, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
+    - query - expressjs query params object received by the server (just in case there is some data you need in there).
+  - `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there's no error. Once the download is completed and there are no more chunks to receive, `onData` should be called with `null` values like so `onData(null, null)`
+3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
+  - `options` - is an object containing the following attributes:
+    - token - authorization token (retrieved from oauth process) to send along with your request.
+    - id - ID of the file being downloaded.
+  - `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
+
+The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g "dropbox").
+
+#### list data
+
+```js
+{
+  // username or email of the user whose provider account is being accessed
+  username: 'johndoe',
+  // list of files and folders in the directory. An item is considered a folder
+  //  if it mainly exists as a collection to contain sub-items
+  items: [
+    {
+      // boolean value of whether or NOT it's a folder
+      isFolder: false,
+      // icon image URL
+      icon: 'https://random-api.url.com/fileicon.jpg',
+      // name of the item
+      name: 'myfile.jpg',
+      // the mime type of the item. Only relevant if the item is NOT a folder
+      mimeType: 'image/jpg',
+      // the id (in string) of the item
+      id: 'uniqueitemid',
+      // thumbnail image URL. Only relevant if the item is NOT a folder
+      thumbnail: 'https://random-api.url.com/filethumbnail.jpg',
+      // for folders this is typically the value that will be passed as "directory" in the list(...) method.
+      // For files, this is the value that will be passed as id in the download(...) method.
+      requestPath: 'file-or-folder-requestpath',
+      // datetime string (in ISO 8601 format) of when this item was last modified
+      modifiedDate: '2020-06-29T19:59:58Z',
+      // the size in bytes of the item. Only relevent if the item is NOT a folder
+      size: 278940,
+      custom: {
+        // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
+        customData1: 'the value',
+        customData2: 'the value',
+      },
+      // more items here
+    }
+  ]
+  // if the "items" list is paginated, this is the request path needed to fetch the next page.
+  nextPagePath: 'directory-name?cursor=cursor-to-next-page'
+}
+```
+
+## Migrating v1 to v2
+
+### Prerequisite
+
+Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
+
+### ProviderOptions
+
+In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
+
+### OAuth Redirect URIs
+
+On your Providers' respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
+
+to:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
+
+Old Redirect URIs vs New Redirect URIs
+
+| Provider | v1 Redirect URI | v2 Redirect URI |
+|-|-|-|
+| Dropbox | https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback | https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect |
+| Google drive | https://$YOUR_COMPANION_HOST_NAME/connect/google/callback | https://$YOUR_COMPANION_HOST_NAME/drive/redirect |
+| OneDrive | https://$YOUR_COMPANION_HOST_NAME/connect/microsoft/callback | https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect |
+| Facebook | https://$YOUR_COMPANION_HOST_NAME/connect/facebook/callback | https://$YOUR_COMPANION_HOST_NAME/facebook/redirect |
+| Instagram | https://$YOUR_COMPANION_HOST_NAME/connect/instagram/callback | https://$YOUR_COMPANION_HOST_NAME/instagram/redirect |
 
 ## Development
 

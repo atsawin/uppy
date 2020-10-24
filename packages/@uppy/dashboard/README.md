@@ -24,7 +24,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dashboard, {
   target: 'body',
   inline: true
@@ -34,7 +34,7 @@ uppy.use(Dashboard, {
 ## Installation
 
 ```bash
-$ npm install @uppy/dashboard --save
+$ npm install @uppy/dashboard
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

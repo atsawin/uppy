@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Webcam = require('@uppy/webcam')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Webcam, {
   mirror: true,
   facingMode: 'user',
@@ -26,7 +26,7 @@ uppy.use(Webcam, {
 ## Installation
 
 ```bash
-$ npm install @uppy/webcam --save
+$ npm install @uppy/webcam
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

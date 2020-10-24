@@ -10,19 +10,19 @@ This packages contains all of the locale packs that you can use to make Uppy spe
 ## Installation
 
 ```bash
-$ npm install @uppy/locales --save
+$ npm install @uppy/locales
 ```
 
 ## Documentation
 
 ```bash
-$ npm install @uppy/core @uppy/locales --save
+$ npm install @uppy/core @uppy/locales
 ```
 
 ```js
 const Uppy = require('@uppy/core')
 const Russian = require('@uppy/locales/lib/ru_RU')
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   meta: {
     username: 'John',

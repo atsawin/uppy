@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const GoldenRetriever = require('@uppy/golden-retriever')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(GoldenRetriever, {
   // Options
 })
@@ -24,7 +24,7 @@ uppy.use(GoldenRetriever, {
 ## Installation
 
 ```bash
-$ npm install @uppy/golden-retriever --save
+$ npm install @uppy/golden-retriever
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

@@ -1,7 +1,4 @@
-const request = require('request')
-const urlParser = require('url')
 const crypto = require('crypto')
-const { getProtectedHttpAgent } = require('./request')
 
 /**
  *
@@ -41,46 +38,6 @@ exports.jsonStringify = (data) => {
  */
 exports.sanitizeHtml = (text) => {
   return text ? text.replace(/<\/?[^>]+(>|$)/g, '') : text
-}
-
-/**
- * Node 6(and beyond) compatible url parser
- * @todo drop the use of url.parse when support for node 6 is dropped
- *
- * @param {string} url URL to be parsed
- */
-exports.parseURL = (url) => {
-  // eslint-disable-next-line
-  return urlParser.URL ? new urlParser.URL(url) : urlParser.parse(url)
-}
-
-/**
- * Gets the size and content type of a url's content
- *
- * @param {string} url
- * @param {boolean=} blockLocalIPs
- * @return {Promise}
- */
-exports.getURLMeta = (url, blockLocalIPs = false) => {
-  return new Promise((resolve, reject) => {
-    const opts = {
-      uri: url,
-      method: 'HEAD',
-      followAllRedirects: true,
-      agentClass: getProtectedHttpAgent(exports.parseURL(url).protocol, blockLocalIPs)
-    }
-
-    request(opts, (err, response, body) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve({
-          type: response.headers['content-type'],
-          size: parseInt(response.headers['content-length'])
-        })
-      }
-    })
-  })
 }
 
 // all paths are assumed to be '/' prepended

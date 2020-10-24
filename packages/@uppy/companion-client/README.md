@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 
 const client = new RequestClient(uppy, { companionUrl: 'https://uppy.mywebsite.com/' })
 client.get('/drive/list').then(() => {})
@@ -35,7 +35,7 @@ socket.on('progress', () => {})
 > Unless you are writing a custom provider plugin, you do not need to install this.
 
 ```bash
-$ npm install @uppy/companion-client --save
+$ npm install @uppy/companion-client
 ```
 
 <!-- Undocumented currently

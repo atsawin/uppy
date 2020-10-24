@@ -18,7 +18,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const GoogleDrive = require('@uppy/google-drive')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(GoogleDrive, {
   // Options
 })
@@ -27,7 +27,7 @@ uppy.use(GoogleDrive, {
 ## Installation
 
 ```bash
-$ npm install @uppy/google-drive --save
+$ npm install @uppy/google-drive
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

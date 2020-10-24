@@ -27,7 +27,7 @@ const reducer = combineReducers({
 
 const store = createStore(reducer)
 
-const uppy = Uppy({
+const uppy = new Uppy({
   store: ReduxStore({
     store: store
   })
@@ -37,7 +37,7 @@ const uppy = Uppy({
 ## Installation
 
 ```bash
-$ npm install @uppy/store-redux --save
+$ npm install @uppy/store-redux
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

@@ -17,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Instagram = require('@uppy/instagram')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Instagram, {
 })
 ```
@@ -25,7 +25,7 @@ uppy.use(Instagram, {
 ## Installation
 
 ```bash
-$ npm install @uppy/instagram --save
+$ npm install @uppy/instagram
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

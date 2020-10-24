@@ -20,14 +20,14 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ```js
 const Uppy = require('@uppy/core')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(SomePlugin)
 ```
 
 ## Installation
 
 ```bash
-$ npm install @uppy/core --save
+$ npm install @uppy/core
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

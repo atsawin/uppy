@@ -1,4 +1,5 @@
 const { h, Component } = require('preact')
+const classNames = require('classnames')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
@@ -85,10 +86,11 @@ class FileCard extends Component {
 
   render () {
     const file = this.props.files[this.props.fileCardFor]
+    const showEditButton = this.props.canEditFile(file)
 
     return (
       <div
-        class="uppy-Dashboard-FileCard"
+        class={classNames('uppy-Dashboard-FileCard', this.props.className)}
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
@@ -112,6 +114,14 @@ class FileCard extends Component {
         <div class="uppy-Dashboard-FileCard-inner">
           <div class="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
             <FilePreview file={file} />
+            {showEditButton &&
+              <button
+                type="button"
+                class="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
+                onClick={() => this.props.openFileEditor(file)}
+              >
+                {this.props.i18n('editFile')}
+              </button>}
           </div>
 
           <div class="uppy-Dashboard-FileCard-info">

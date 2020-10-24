@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200
 })
@@ -24,7 +24,7 @@ uppy.use(ThumbnailGenerator, {
 ## Installation
 
 ```bash
-$ npm install @uppy/thumbnail-generator --save
+$ npm install @uppy/thumbnail-generator
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

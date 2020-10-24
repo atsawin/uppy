@@ -17,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const FileInput = require('@uppy/file-input')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(FileInput, {
   // Options
 })
@@ -26,7 +26,7 @@ uppy.use(FileInput, {
 ## Installation
 
 ```bash
-$ npm install @uppy/file-input --save
+$ npm install @uppy/file-input
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

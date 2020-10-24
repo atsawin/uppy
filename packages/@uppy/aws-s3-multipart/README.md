@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const AwsS3Multipart = require('@uppy/aws-s3-multipart')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(AwsS3Multipart, {
   limit: 2,
   companionUrl: 'https://companion.myapp.com/'
@@ -25,7 +25,7 @@ uppy.use(AwsS3Multipart, {
 ## Installation
 
 ```bash
-$ npm install @uppy/aws-s3-multipart --save
+$ npm install @uppy/aws-s3-multipart
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

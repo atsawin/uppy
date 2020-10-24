@@ -85,6 +85,17 @@ module.exports = class ProviderView {
     this.render = this.render.bind(this)
 
     this.clearSelection()
+
+    // Set default state for the plugin
+    this.plugin.setPluginState({
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      activeRow: -1,
+      filterInput: '',
+      isSearchVisible: false
+    })
   }
 
   tearDown () {
@@ -136,7 +147,7 @@ module.exports = class ProviderView {
           updatedDirectories = state.directories.concat([{ id, title: name }])
         }
 
-        this.username = this.username ? this.username : res.username
+        this.username = res.username || this.username
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
@@ -146,7 +157,7 @@ module.exports = class ProviderView {
   /**
    * Fetches new folder
    *
-   * @param  {object} Folder
+   * @param  {object} folder
    * @param  {string} title Folder title
    */
   getNextFolder (folder) {
@@ -183,10 +194,12 @@ module.exports = class ProviderView {
     this.plugin.uppy.log('Adding remote file')
     try {
       this.plugin.uppy.addFile(tagFile)
+      return true
     } catch (err) {
       if (!err.isRestriction) {
         this.plugin.uppy.log(err)
       }
+      return false
     }
   }
 
@@ -350,35 +363,40 @@ module.exports = class ProviderView {
    */
   addFolder (folder) {
     const folderId = this.providerFileToId(folder)
-    let state = this.plugin.getPluginState()
-    const folders = state.selectedFolders || {}
+    const state = this.plugin.getPluginState()
+    const folders = { ...state.selectedFolders }
     if (folderId in folders && folders[folderId].loading) {
       return
     }
     folders[folderId] = { loading: true, files: [] }
-    this.plugin.setPluginState({ selectedFolders: folders })
+    this.plugin.setPluginState({ selectedFolders: { ...folders } })
     return this.listAllFiles(folder.requestPath).then((files) => {
+      let count = 0
       files.forEach((file) => {
-        this.addFile(file)
+        const success = this.addFile(file)
+        if (success) count++
       })
       const ids = files.map(this.providerFileToId)
-      state = this.plugin.getPluginState()
-      state.selectedFolders[folderId] = { loading: false, files: ids }
+      folders[folderId] = {
+        loading: false,
+        files: ids
+      }
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
       if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
-          smart_count: files.length, folder: folder.name
+          smart_count: count, folder: folder.name
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')
       }
       this.plugin.uppy.info(message)
     }).catch((e) => {
-      state = this.plugin.getPluginState()
-      delete state.selectedFolders[folderId]
-      this.plugin.setPluginState({ selectedFolders: state.selectedFolders })
+      const state = this.plugin.getPluginState()
+      const selectedFolders = { ...state.selectedFolders }
+      delete selectedFolders[folderId]
+      this.plugin.setPluginState({ selectedFolders })
       this.handleError(e)
     })
   }
@@ -510,6 +528,8 @@ module.exports = class ProviderView {
         res.items.forEach((item) => {
           if (!item.isFolder) {
             files.push(item)
+          } else {
+            this.addFolder(item)
           }
         })
         const moreFiles = res.nextPagePath || null
